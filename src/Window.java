@@ -15,7 +15,7 @@ public class Window extends JFrame{
 
         setSize(WIDTH, HEIGHT);
         setTitle("Tetris_Cutre_Game");
-        setResizable(false);
+        //setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
