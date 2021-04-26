@@ -1,10 +1,31 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class Board extends JPanel {
+
+
+public class Board extends JPanel implements ActionListener {
 
     public static final int NUM_COLS = 10, NUM_ROWS = 22;
+
+    Timer timer;
+    boolean isFallingFinished = false;
+    boolean isStarted = false;
+    int numLinesRemoved = 0;
+    JLabel statusbar;
+    Shape curPiece;
+    int currentX = 0;
+    int currentY= 0;
+
+
     public Board(){
+        setFocusable(true);
+        Shape currentShape = new Shape();
+        timer = new Timer(400,this);
+        timer.start();
+
+
 
     }
 
@@ -43,5 +64,15 @@ public class Board extends JPanel {
         g.drawLine(x + getSquareWidth() - 1,
                 y + getSquareHeight() - 1,
                 x + getSquareWidth() - 1, y + 1);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (isFallingFinished) {
+            isFallingFinished = false;
+
+        } else {
+
+        }
     }
 }

@@ -4,6 +4,7 @@ public class Shape {
     private  Tetrominoes pieceShape;
     private  int coords[][];
 
+
     private static int[][][] coordsTable = new int [][][] {
             { { 0, 0 },   { 0, 0 },   { 0, 0 },   { 0, 0 } },
             { { 0, -1 },  { 0, 0 },   { -1, 0 },  { -1, 1 } },
@@ -96,8 +97,8 @@ public class Shape {
         result.pieceShape = pieceShape;
 
         for (int i = 0; i < 4; i++) {
-            result.setX(i, -coords[i][1]);
-            result.setY(i, coords[i][0]);
+            result.setX(i, getY(i));
+            result.setY(i, -getX(i));
         }
 
         return result;
@@ -112,8 +113,8 @@ public class Shape {
         result.pieceShape = pieceShape;
 
         for (int i = 0; i < 4; i++) {
-            result.setX(i, coords[i][1]);
-            result.setY(i, -coords[i][0]);
+            result.setX(i, -getY(i));
+            result.setY(i, getX(i));
         }
 
         return result;
