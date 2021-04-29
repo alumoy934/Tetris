@@ -7,7 +7,10 @@ import java.awt.event.ActionListener;
 
 public class Board extends JPanel implements ActionListener {
 
+
+
     public static final int NUM_COLS = 10, NUM_ROWS = 22;
+    private Shape.Tetrominoes [][] squares;
 
     Timer timer;
     boolean isFallingFinished = false;
@@ -15,23 +18,48 @@ public class Board extends JPanel implements ActionListener {
     int numLinesRemoved = 0;
     JLabel statusbar;
     Shape curPiece;
-    int currentX = 0;
+    int currentX = NUM_COLS / 2;
     int currentY= 0;
 
 
     public Board(){
+        super();
         setFocusable(true);
-        Shape currentShape = new Shape();
-        timer = new Timer(400,this);
+        curPiece = new Shape();
+        timer = new Timer(400, this);
         timer.start();
-
+        squares = new Shape.Tetrominoes[NUM_ROWS][NUM_COLS];
+        for (int i = 0; i < NUM_ROWS; i++) {
+            for (int j = 0; j < NUM_COLS; j++) {
+                squares[i][j] = Shape.Tetrominoes.NoShape;
+            }
+        }
 
 
     }
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        drawSquare(g,5,9, Shape.Tetrominoes.LShape);
+        drawSquares(g);
+        drawCurrentShape(g);
+
+    }
+
+    private void drawSquares(Graphics g) {
+        for (int i = 0; i < NUM_ROWS; i++) {
+            for (int j = 0; j < NUM_COLS; j++) {
+               drawSquare(g, i, j,squares[i][j]);
+            }
+        }
+    }
+
+    private void drawCurrentShape(Graphics g) {
+        for (int i = 0; i < 4; i++) {
+            int row = currentY + curPiece.getY(i);
+            int col = currentX + curPiece.getX(i);
+            drawSquare(g,row, col, curPiece.getShape());
+
+        }
     }
 
     public int getSquareWidth(){
@@ -68,11 +96,37 @@ public class Board extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (isFallingFinished) {
-            isFallingFinished = false;
+        if (canMove(curPiece, currentY +1, currentX)) {
+            currentY++;
+        }else{
+            moveCurpiceToSquares();
+            curPiece = new Shape();
+            currentY = 0;
+        }
+       repaint();
+    }
 
-        } else {
+    private void moveCurpiceToSquares() {
+        for (int i = 0; i < 4; i++) {
+            int row = currentY + curPiece.getY(i);
+            int col = currentX + curPiece.getX(i);
+            squares[row][col] = curPiece.getShape();
+        }
+    }
+
+    public boolean canMove(Shape s, int y, int x){
+        if (y + s.maxY() >= NUM_ROWS){
+            return false;
+        }
+
+        //comprobar colisión con squares
+        for (int i = 0; i < 4; i++) {
+              if (squares[y + s.getY(i)][x + s.getX(i)] != Shape.Tetrominoes.NoShape){
+                  return false;
+              }
+
 
         }
+        return true;
     }
 }

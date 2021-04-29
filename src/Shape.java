@@ -18,7 +18,7 @@ public class Shape {
 
     public Shape(){
         coords = new int[4][2];
-        setShape(Tetrominoes.NoShape);
+        setRandonShape();
     }
 
     private void setShape(Tetrominoes shapeType) {
