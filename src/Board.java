@@ -2,7 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 
 public class Board extends JPanel implements ActionListener {
@@ -34,6 +35,9 @@ public class Board extends JPanel implements ActionListener {
                 squares[i][j] = Shape.Tetrominoes.NoShape;
             }
         }
+
+        TAdapter keyAdapter = new TAdapter();
+        addKeyListener(keyAdapter);
 
 
     }
@@ -98,12 +102,15 @@ public class Board extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (canMove(curPiece, currentY +1, currentX)) {
             currentY++;
+
         }else{
             moveCurpiceToSquares();
             curPiece = new Shape();
             currentY = 0;
+            currentX = NUM_COLS / 2;
         }
-       repaint();
+
+        repaint();
     }
 
     private void moveCurpiceToSquares() {
@@ -118,15 +125,71 @@ public class Board extends JPanel implements ActionListener {
         if (y + s.maxY() >= NUM_ROWS){
             return false;
         }
+        /*if (x + s.maxX() < 0 || x + s.maxX() >= NUM_COLS){
+            return false;
+        }*/
 
         //comprobar colisión con squares
         for (int i = 0; i < 4; i++) {
               if (squares[y + s.getY(i)][x + s.getX(i)] != Shape.Tetrominoes.NoShape){
                   return false;
               }
-
-
         }
         return true;
     }
+
+
+    public boolean Move (Shape s, int newX, int newY){
+        for (int i = 0; i < 4; i++) {
+            int x = newX + s.getX(i);
+            int y = newY - s.getY(i);
+
+            if (x < 0 || x >= NUM_COLS || y < 0 || y >= NUM_ROWS){
+                return false;
+            }
+
+            if (squares[y + s.getY(i)][x + s.getX(i)] != Shape.Tetrominoes.NoShape){
+                return false;
+            }
+        }
+
+        curPiece = new Shape();
+        currentX = newX;
+        currentY = newY;
+        repaint();
+        return true;
+    }
+
+    class TAdapter extends KeyAdapter {
+        public void keyPressed(KeyEvent e) {
+
+            int keycode = e.getKeyCode();
+
+            switch (keycode) {
+                case KeyEvent.VK_LEFT:
+                    Move(curPiece, currentX - 1, currentY);
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    Move(curPiece, currentX + 1, currentY);
+                    break;
+                case KeyEvent.VK_DOWN:
+                    Move(curPiece.rotateRight(), currentX, currentY);
+                    break;
+                case KeyEvent.VK_UP:
+                    Move(curPiece.rotateLeft(), currentX, currentY);
+                    break;
+                /*case KeyEvent.VK_SPACE:
+                    dropDown();
+                    break;
+                case 'd':
+                    oneLineDown();
+                    break;
+                case 'D':
+                    oneLineDown();
+                    break;*/
+            }
+
+        }
+    }
+
 }
