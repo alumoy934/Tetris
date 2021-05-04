@@ -22,6 +22,8 @@ public class Board extends JPanel implements ActionListener {
     int currentX = NUM_COLS / 2;
     int currentY= 0;
 
+    Shape.Tetrominoes tetrominoes;
+
 
     public Board(){
         super();
@@ -125,9 +127,9 @@ public class Board extends JPanel implements ActionListener {
         if (y + s.maxY() >= NUM_ROWS){
             return false;
         }
-        /*if (x + s.maxX() < 0 || x + s.maxX() >= NUM_COLS){
+        if (x + s.maxX() < 0 || x + s.maxX() >= NUM_COLS){
             return false;
-        }*/
+        }
 
         //comprobar colisión con squares
         for (int i = 0; i < 4; i++) {
@@ -144,7 +146,7 @@ public class Board extends JPanel implements ActionListener {
             int x = newX + s.getX(i);
             int y = newY - s.getY(i);
 
-            if (x < 0 || x >= NUM_COLS || y < 0 || y >= NUM_ROWS){
+            if (x < 0 || x > NUM_COLS || y < 0 || y >= NUM_ROWS){
                 return false;
             }
 
@@ -159,6 +161,8 @@ public class Board extends JPanel implements ActionListener {
         repaint();
         return true;
     }
+
+
 
     class TAdapter extends KeyAdapter {
         public void keyPressed(KeyEvent e) {
