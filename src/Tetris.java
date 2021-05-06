@@ -3,14 +3,17 @@ import java.awt.*;
 
 public class Tetris extends JFrame{
 
-    public JLabel statusbar;
+    public static JLabel statusbar;
 
     public static final int WIDTH = 300, HEIGHT = 600;
+
+    public static int totalScore = 0;
 
     public Tetris(){
         // barra de estado
         statusbar = new JLabel("Score: 0");
         add(statusbar, BorderLayout.SOUTH);
+
 
         // tablero de juego
         Board board = new Board();

@@ -8,8 +8,6 @@ import java.awt.event.KeyEvent;
 
 public class Board extends JPanel implements ActionListener {
 
-
-
     public static final int NUM_COLS = 10, NUM_ROWS = 22;
     private Shape.Tetrominoes [][] squares;
 
@@ -20,7 +18,9 @@ public class Board extends JPanel implements ActionListener {
     JLabel statusbar;
     Shape curPiece;
     int currentX = NUM_COLS / 2;
-    int currentY= 0;
+    int currentY= 1;
+
+    private int scoreTotal = 0;
 
     Shape.Tetrominoes tetrominoes;
 
@@ -107,12 +107,30 @@ public class Board extends JPanel implements ActionListener {
 
         }else{
             moveCurpiceToSquares();
+            chekLines();
+            if(checkForGameOver()){
+                JOptionPane.showMessageDialog(null, "Eres malo. Aprende de Juan Guerra.",
+                        "GAME OVER", JOptionPane.WARNING_MESSAGE);
+            }
+
             curPiece = new Shape();
             currentY = 0;
             currentX = NUM_COLS / 2;
         }
 
         repaint();
+    }
+
+
+
+    private boolean checkForGameOver() {
+        boolean gameOver = false;
+        for (int i = 0; i < NUM_COLS; i++) {
+            if (squares[0][i] != Shape.Tetrominoes.NoShape) {
+                gameOver = true;
+            }
+        }
+        return gameOver;
     }
 
     private void moveCurpiceToSquares() {
@@ -127,7 +145,7 @@ public class Board extends JPanel implements ActionListener {
         if (y + s.maxY() >= NUM_ROWS){
             return false;
         }
-        if (x + s.maxX() < 0 || x + s.maxX() >= NUM_COLS){
+        if (x + s.minX() < 0 || x + s.maxX() >= NUM_COLS){
             return false;
         }
 
@@ -140,28 +158,42 @@ public class Board extends JPanel implements ActionListener {
         return true;
     }
 
+    public void chekLines (){
+        boolean completedLine;
 
-    public boolean Move (Shape s, int newX, int newY){
-        for (int i = 0; i < 4; i++) {
-            int x = newX + s.getX(i);
-            int y = newY - s.getY(i);
+        int linescore = 10;
 
-            if (x < 0 || x > NUM_COLS || y < 0 || y >= NUM_ROWS){
-                return false;
+        int i = NUM_ROWS -1;
+        while (i >= 0){
+            completedLine = true;
+            for (int j = 0; j < NUM_COLS; j++) {
+                if ( squares[i][j] == Shape.Tetrominoes.NoShape){
+                    completedLine = false;
+                    break;
+                }
             }
-
-            if (squares[y + s.getY(i)][x + s.getX(i)] != Shape.Tetrominoes.NoShape){
-                return false;
+            if (completedLine){
+                deleteline(i);
+                scoreTotal += linescore;
+                Tetris.statusbar.setText("Score: " + scoreTotal);
+            }else{
+                i--;
             }
         }
 
-        curPiece = new Shape();
-        currentX = newX;
-        currentY = newY;
-        repaint();
-        return true;
     }
 
+    private void deleteline(int line) {
+        for (int i = line; i >=1 ; i--) {
+            for (int j = 0; j < NUM_COLS; j++) {
+                squares[i][j] = squares[i-1][j];
+            }
+        }
+
+        for (int j = 0; j < NUM_COLS; j++) {
+            squares[0][j] = Shape.Tetrominoes.NoShape;
+        }
+    }
 
 
     class TAdapter extends KeyAdapter {
@@ -171,28 +203,28 @@ public class Board extends JPanel implements ActionListener {
 
             switch (keycode) {
                 case KeyEvent.VK_LEFT:
-                    Move(curPiece, currentX - 1, currentY);
+                    if (canMove(curPiece, currentY,currentX - 1)){
+                        currentX --;
+                    }
                     break;
                 case KeyEvent.VK_RIGHT:
-                    Move(curPiece, currentX + 1, currentY);
+                    if (canMove(curPiece, currentY,currentX + 1)){
+                        currentX ++;
+                    }
                     break;
                 case KeyEvent.VK_DOWN:
-                    Move(curPiece.rotateRight(), currentX, currentY);
+                    if (canMove(curPiece, currentY+1,currentX)){
+                        currentY ++;
+                    }
                     break;
                 case KeyEvent.VK_UP:
-                    Move(curPiece.rotateLeft(), currentX, currentY);
+                    Shape rotated = curPiece.rotateRight();
+                    if (canMove(rotated, currentY,currentX)){
+                        curPiece = rotated;
+                    }
                     break;
-                /*case KeyEvent.VK_SPACE:
-                    dropDown();
-                    break;
-                case 'd':
-                    oneLineDown();
-                    break;
-                case 'D':
-                    oneLineDown();
-                    break;*/
             }
-
+            repaint();
         }
     }
 
