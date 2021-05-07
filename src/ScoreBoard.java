@@ -18,6 +18,7 @@ public class ScoreBoard extends JPanel implements Incrementer{
 
         Thread t = new Thread(new Runnable() {
 
+
             int i = 0;
             @Override
             public void run() {

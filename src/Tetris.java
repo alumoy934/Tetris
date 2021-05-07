@@ -6,6 +6,7 @@ public class Tetris extends JFrame{
 
     public static final int WIDTH = 300, HEIGHT = 600;
 
+
     private ScoreBoard scoreBoard;
 
     public Tetris(){

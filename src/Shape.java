@@ -5,6 +5,7 @@ public class Shape {
     private  int coords[][];
 
 
+
     private static int[][][] coordsTable = new int [][][] {
             { { 0, 0 },   { 0, 0 },   { 0, 0 },   { 0, 0 } },
             { { 0, -1 },  { 0, 0 },   { -1, 0 },  { -1, 1 } },

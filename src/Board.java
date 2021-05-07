@@ -19,6 +19,7 @@ public class Board extends JPanel implements ActionListener {
     int currentX = NUM_COLS / 2;
     int currentY= 1;
 
+
     private Incrementer scoreBoardIncrementer;
 
     Shape.Tetrominoes tetrominoes;
