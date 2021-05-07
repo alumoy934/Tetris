@@ -15,19 +15,19 @@ public class Board extends JPanel implements ActionListener {
     boolean isFallingFinished = false;
     boolean isStarted = false;
     int numLinesRemoved = 0;
-    JLabel statusbar;
     Shape curPiece;
     int currentX = NUM_COLS / 2;
     int currentY= 1;
 
-    private int scoreTotal = 0;
+    private Incrementer scoreBoardIncrementer;
 
     Shape.Tetrominoes tetrominoes;
 
 
-    public Board(){
+    public Board(Incrementer scoreBoardIncrementer){
         super();
         setFocusable(true);
+        this.scoreBoardIncrementer = scoreBoardIncrementer;
         curPiece = new Shape();
         timer = new Timer(400, this);
         timer.start();
@@ -109,8 +109,7 @@ public class Board extends JPanel implements ActionListener {
             moveCurpiceToSquares();
             chekLines();
             if(checkForGameOver()){
-                JOptionPane.showMessageDialog(null, "Eres malo. Aprende de Juan Guerra.",
-                        "GAME OVER", JOptionPane.WARNING_MESSAGE);
+                ProcessGameOver();
             }
 
             curPiece = new Shape();
@@ -121,6 +120,11 @@ public class Board extends JPanel implements ActionListener {
         repaint();
     }
 
+    private void ProcessGameOver() {
+        JOptionPane.showMessageDialog(null, "Eres malo. Aprende de Juan Guerra.",
+                "GAME OVER", JOptionPane.WARNING_MESSAGE);
+        timer.stop();
+    }
 
 
     private boolean checkForGameOver() {
@@ -128,6 +132,7 @@ public class Board extends JPanel implements ActionListener {
         for (int i = 0; i < NUM_COLS; i++) {
             if (squares[0][i] != Shape.Tetrominoes.NoShape) {
                 gameOver = true;
+
             }
         }
         return gameOver;
@@ -137,7 +142,10 @@ public class Board extends JPanel implements ActionListener {
         for (int i = 0; i < 4; i++) {
             int row = currentY + curPiece.getY(i);
             int col = currentX + curPiece.getX(i);
-            squares[row][col] = curPiece.getShape();
+            if (row >= 0){
+                squares[row][col] = curPiece.getShape();
+            }
+
         }
     }
 
@@ -151,9 +159,13 @@ public class Board extends JPanel implements ActionListener {
 
         //comprobar colisión con squares
         for (int i = 0; i < 4; i++) {
-              if (squares[y + s.getY(i)][x + s.getX(i)] != Shape.Tetrominoes.NoShape){
-                  return false;
-              }
+            int newY = y + s.getY(i);
+            if (newY >= 0 ){
+                if (squares[newY][x + s.getX(i)] != Shape.Tetrominoes.NoShape){
+                    return false;
+                }
+            }
+
         }
         return true;
     }
@@ -174,14 +186,15 @@ public class Board extends JPanel implements ActionListener {
             }
             if (completedLine){
                 deleteline(i);
-                scoreTotal += linescore;
-                Tetris.statusbar.setText("Score: " + scoreTotal);
+                scoreBoardIncrementer.increment(10);
             }else{
                 i--;
             }
         }
 
     }
+
+
 
     private void deleteline(int line) {
         for (int i = line; i >=1 ; i--) {
